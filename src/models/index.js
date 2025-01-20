@@ -9,6 +9,12 @@ const sequelize = new Sequelize({
 class Profile extends Sequelize.Model {}
 Profile.init(
   {
+    id: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     firstName: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -25,7 +31,23 @@ Profile.init(
       type: Sequelize.DECIMAL(12, 2),
     },
     type: {
-      type: Sequelize.ENUM('client', 'contractor'),
+      type: Sequelize.STRING, // Changing since sqlite does not support ENUM.
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [['client', 'contractor']], // Allowed values
+          msg: 'Type must be either client or contractor.', // Custom message for invalid type
+        },
+      },
+    },
+    email: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      unique: true, // Add unique constraint to email
+    },
+    password: {
+      type: Sequelize.STRING,
+      allowNull: false,
     },
   },
   {

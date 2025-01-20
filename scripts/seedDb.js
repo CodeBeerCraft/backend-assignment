@@ -1,15 +1,12 @@
 const { Profile, Contract, Job } = require('../src/models');
-
 /* WARNING THIS WILL DROP THE CURRENT DATABASE */
-seed();
-
-async function seed() {
+const seed = async () => {
   // create tables
   await Profile.sync({ force: true });
   await Contract.sync({ force: true });
   await Job.sync({ force: true });
   //insert data
-  await Promise.all([
+  const profile_result = await Promise.allSettled([
     Profile.create({
       id: 1,
       firstName: 'Harry',
@@ -17,6 +14,8 @@ async function seed() {
       profession: 'Wizard',
       balance: 1150,
       type: 'client',
+      email: 'potter@hogwards.com',
+      password: btoa('Wizard'),
     }),
     Profile.create({
       id: 2,
@@ -25,6 +24,8 @@ async function seed() {
       profession: 'Hacker',
       balance: 231.11,
       type: 'client',
+      email: 'Hacker@hogwards.com',
+      password: btoa('Hacker'),
     }),
     Profile.create({
       id: 3,
@@ -33,6 +34,8 @@ async function seed() {
       profession: 'Knows nothing',
       balance: 451.3,
       type: 'client',
+      email: 'Snow@hogwards.com',
+      password: btoa('Knows nothing'),
     }),
     Profile.create({
       id: 4,
@@ -41,6 +44,8 @@ async function seed() {
       profession: 'Pokemon master',
       balance: 1.3,
       type: 'client',
+      email: 'Kethcum@hogwards.com',
+      password: btoa('Pokemon master'),
     }),
     Profile.create({
       id: 5,
@@ -49,6 +54,8 @@ async function seed() {
       profession: 'Musician',
       balance: 64,
       type: 'contractor',
+      email: 'Lenon@hogwards.com',
+      password: btoa('Musician'),
     }),
     Profile.create({
       id: 6,
@@ -57,6 +64,8 @@ async function seed() {
       profession: 'Programmer',
       balance: 1214,
       type: 'contractor',
+      email: 'Torvalds@hogwards.com',
+      password: btoa('Programmer'),
     }),
     Profile.create({
       id: 7,
@@ -65,6 +74,8 @@ async function seed() {
       profession: 'Programmer',
       balance: 22,
       type: 'contractor',
+      email: 'Turing@hogwards.com',
+      password: btoa('Programmer'),
     }),
     Profile.create({
       id: 8,
@@ -73,7 +84,12 @@ async function seed() {
       profession: 'Fighter',
       balance: 314,
       type: 'contractor',
+      email: 'Elessar@hogwards.com',
+      password: btoa('Fighter'),
     }),
+  ]);
+
+  const contracts_result = await Promise.allSettled([
     Contract.create({
       id: 1,
       terms: 'bla bla bla',
@@ -137,6 +153,9 @@ async function seed() {
       ClientId: 4,
       ContractorId: 8,
     }),
+  ]);
+
+  const job_result = await Promise.allSettled([
     Job.create({
       description: 'work',
       price: 200,
@@ -226,4 +245,11 @@ async function seed() {
       ContractId: 3,
     }),
   ]);
-}
+
+  console.log(
+    `DB Synced successfully. Profile : ${profile_result.length}, Contracts : ${contracts_result.length}, Jobs : ${job_result.length}`,
+  );
+};
+
+/* WARNING THIS WILL DROP THE CURRENT DATABASE */
+seed();

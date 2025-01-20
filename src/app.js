@@ -13,6 +13,7 @@ const bodyParser = require('body-parser');
 const { sequelize } = require('./models');
 const { errorHandler } = require('./middleware');
 const contractsRouter = require('./routes/contracts');
+const profilesRouter = require('./routes/profiles');
 
 // Express App Initialization.
 const app = express();
@@ -32,6 +33,7 @@ app.use(helmet.hidePoweredBy());
  * Routes Definitions.
  */
 app.use('/contracts', contractsRouter);
+app.use('/profiles', profilesRouter);
 
 /**
  * Custom Error Handler :: Ensures failure into the controllers that throws error at runtime.
