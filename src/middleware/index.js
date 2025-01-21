@@ -47,7 +47,6 @@ const messages = {
 const Authenticate = (req, res, next) => {
   try {
     const token = req.header('Authorization');
-    console.log(token);
 
     if (!token) {
       return res.status(401).send(messages['401']);
@@ -65,20 +64,19 @@ const Authenticate = (req, res, next) => {
       }
 
       const email = sanitizer.value(decoded.email, 'str');
+      const type = sanitizer.value(decoded.type, 'str');
 
-      const users = await Profile.findAll({
-        where: { email },
+      const profile = await Profile.findOne({
+        where: { email, type },
         attributes: ['type', 'id'],
       });
 
-      if (users.length === 0) {
+      if (profile === null) {
         return res.status(401).send(messages['401']);
       }
 
-      const profile = users[0];
-
       req.params.email = sanitizer.value(email, 'str');
-      req.params.profile_id = sanitizer.value(profile.id, 'int');
+      req.params.profileId = sanitizer.value(profile.id, 'int');
       req.params.type = sanitizer.value(profile.type, 'str');
 
       next();
@@ -88,4 +86,19 @@ const Authenticate = (req, res, next) => {
   }
 };
 
-module.exports = { errorHandler, Authenticate };
+const Rbac = (type) => {
+  return async (req, res, next) => {
+    try {
+      const profileType = req.paramString('type');
+      if (profileType === type) {
+        next();
+      } else {
+        return res.status(403).json(messages[403]);
+      }
+    } catch (error) {
+      return res.status(403).json(messages[403]);
+    }
+  };
+};
+
+module.exports = { errorHandler, Authenticate, Rbac };

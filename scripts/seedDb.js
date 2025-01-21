@@ -6,7 +6,7 @@ const seed = async () => {
   await Contract.sync({ force: true });
   await Job.sync({ force: true });
   //insert data
-  const profile_result = await Promise.allSettled([
+  const profileResult = await Promise.allSettled([
     Profile.create({
       id: 1,
       firstName: 'Harry',
@@ -89,7 +89,7 @@ const seed = async () => {
     }),
   ]);
 
-  const contracts_result = await Promise.allSettled([
+  const contractsResult = await Promise.allSettled([
     Contract.create({
       id: 1,
       terms: 'bla bla bla',
@@ -155,7 +155,7 @@ const seed = async () => {
     }),
   ]);
 
-  const job_result = await Promise.allSettled([
+  const jobResult = await Promise.allSettled([
     Job.create({
       description: 'work',
       price: 200,
@@ -247,7 +247,7 @@ const seed = async () => {
   ]);
 
   console.log(
-    `DB Synced successfully. Profile : ${profile_result.length}, Contracts : ${contracts_result.length}, Jobs : ${job_result.length}`,
+    `DB Synced successfully. Profile : ${profileResult.length}, Contracts : ${contractsResult.length}, Jobs : ${jobResult.length}`,
   );
 };
 

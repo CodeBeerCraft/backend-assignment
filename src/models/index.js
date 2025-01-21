@@ -31,19 +31,18 @@ Profile.init(
       type: Sequelize.DECIMAL(12, 2),
     },
     type: {
-      type: Sequelize.STRING, // Changing since sqlite does not support ENUM.
+      type: Sequelize.STRING, // Changing since SQLite does not support ENUM.
       allowNull: false,
       validate: {
         isIn: {
           args: [['client', 'contractor']], // Allowed values
-          msg: 'Type must be either client or contractor.', // Custom message for invalid type
+          msg: 'Type must be either client or contractor.', // Custom error message for validation
         },
       },
     },
     email: {
       type: Sequelize.STRING,
       allowNull: false,
-      unique: true, // Add unique constraint to email
     },
     password: {
       type: Sequelize.STRING,
@@ -53,6 +52,12 @@ Profile.init(
   {
     sequelize,
     modelName: 'Profile',
+    indexes: [
+      {
+        unique: true,
+        fields: ['email', 'type'], // Composite unique constraint
+      },
+    ],
   },
 );
 

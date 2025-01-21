@@ -2,8 +2,13 @@ const { Profile } = require('../../models');
 const jwt = require('jsonwebtoken');
 const FetchProfile = async (req, res, next) => {
   try {
-    const profile_id = req.paramInt('profile_id');
-    const profile = await Profile.findOne({ where: { id: profile_id } });
+    const profileId = req.paramInt('profileId');
+    const profile = await Profile.findOne({
+      attributes: {
+        exclude: ['password', 'createdAt', 'updatedAt'], // Exclude these fields
+      },
+      where: { id: profileId },
+    });
     const response = {
       success: profile != null ? true : false,
       error: profile == null ? true : false,
@@ -23,6 +28,7 @@ const LoginWithProfile = async (req, res, next) => {
   try {
     const email = req.bodyEmail('email');
     const password = req.bodyString('password');
+    const type = req.bodyString('type');
 
     if (password.length === 0 || email === null) {
       await transaction.rollback();
@@ -36,9 +42,11 @@ const LoginWithProfile = async (req, res, next) => {
 
     const profile = await Profile.findOne(
       {
+        attributes: ['id', 'email', 'type'],
         where: {
           email,
           password: btoa(password),
+          type,
         },
       },
       { transaction },
@@ -49,7 +57,8 @@ const LoginWithProfile = async (req, res, next) => {
       token = jwt.sign(
         {
           id: profile != null ? profile.id : 0,
-          email: email.toLowerCase(),
+          email: profile.email.toLowerCase(),
+          type: profile.type.toLowerCase(),
         },
         process.env.SECRET,
         { expiresIn: '6h' },
@@ -81,12 +90,12 @@ const RegisterNewProfile = async (req, res, next) => {
     const firstName = req.bodyString('firstName');
     const lastName = req.bodyString('lastName');
     const password = req.bodyString('password');
-    const confirm_password = req.bodyString('confirm_password');
+    const confirmPassword = req.bodyString('confirmPassword');
     const profession = req.bodyString('profession');
     const type = req.bodyString('type');
     const balance = req.bodyFloat('balance') || 0.0;
 
-    if (password !== confirm_password || email === null) {
+    if (password !== confirmPassword || email === null) {
       await transaction.rollback();
       return res.status(400).json({
         success: false,
@@ -113,7 +122,7 @@ const RegisterNewProfile = async (req, res, next) => {
       success: profile !== null ? true : false,
       error: profile === null ? true : false,
       message: profile === null ? 'Profile registeration failed' : 'Profile got registered',
-      data: profile,
+      data: null,
     };
 
     await transaction.commit(); // Commit the transaction
@@ -121,7 +130,11 @@ const RegisterNewProfile = async (req, res, next) => {
     return res.status(response.success ? 200 : 400).json(response);
   } catch (error) {
     await transaction.rollback(); // Roll back the transaction in case of error
-    next(error);
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      next(new Error('A profile with this email and type already exists.'));
+    } else {
+      next(error);
+    }
   }
 };
 
