@@ -39,8 +39,7 @@ const Fetchjobs = async (req, res, next) => {
     const response = {
       success: contract.length ? true : false,
       error: contract.length === 0 ? true : false,
-      message:
-        contract.length === 0 ? 'No Contracts found for you' : `${contract.length} Contracts found`,
+      message: contract.length === 0 ? 'No Jobs found for you' : `${contract.length} Jobs found`,
       data: contract,
     };
 

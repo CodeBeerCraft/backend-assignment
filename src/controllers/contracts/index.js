@@ -163,4 +163,50 @@ const CreateContracts = async (req, res, next) => {
   }
 };
 
-module.exports = { FetchContractById, FetchContracts, CreateContracts };
+const StartJob = async (req, res, next) => {
+  try {
+    const profileId = req.paramInt('profileId');
+    const contractId = req.paramInt('contractId');
+
+    if (isNaN(profileId) || isNaN(contractId)) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: 'Bad Request : Invalid profileId or contractId',
+        data: null,
+      });
+    }
+
+    const contract = await Contract.findOne({
+      where: {
+        id: contractId,
+        ContractorId: profileId,
+        status: 'new',
+      },
+    });
+
+    if (contract === null) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message:
+          'Bad Request : Contract not found or it does not belongs to you or already started',
+        data: null,
+      });
+    }
+
+    contract.status = 'in_progress';
+    await contract.save();
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      message: 'Contract started',
+      data: contract,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { FetchContractById, FetchContracts, CreateContracts, StartJob };
