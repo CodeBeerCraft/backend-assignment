@@ -14,6 +14,7 @@ const { sequelize } = require('./models');
 const { errorHandler } = require('./middleware');
 const contractsRouter = require('./routes/contracts');
 const profilesRouter = require('./routes/profiles');
+const jobsRouter = require('./routes/jobs');
 
 // Express App Initialization.
 const app = express();
@@ -34,6 +35,7 @@ app.use(helmet.hidePoweredBy());
  */
 app.use('/contracts', contractsRouter);
 app.use('/profiles', profilesRouter);
+app.use('/jobs', jobsRouter);
 
 /**
  * Custom Error Handler :: Ensures failure into the controllers that throws error at runtime.
