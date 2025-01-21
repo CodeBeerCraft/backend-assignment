@@ -16,7 +16,7 @@ const contractsRouter = require('./routes/contracts');
 const profilesRouter = require('./routes/profiles');
 const jobsRouter = require('./routes/jobs');
 const balanceRouter = require('./routes/balance');
-// const adminRouter = require('./routes/admin');
+const adminRouter = require('./routes/admin');
 
 // Express App Initialization.
 const app = express();
@@ -39,7 +39,7 @@ app.use('/contracts', contractsRouter);
 app.use('/profiles', profilesRouter);
 app.use('/jobs', jobsRouter);
 app.use('/balance', balanceRouter);
-// app.use('/admin', adminRouter);
+app.use('/admin', adminRouter);
 
 /**
  * Custom Error Handler :: Ensures failure into the controllers that throws error at runtime.

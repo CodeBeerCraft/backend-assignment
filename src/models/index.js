@@ -35,7 +35,7 @@ Profile.init(
       allowNull: false,
       validate: {
         isIn: {
-          args: [['client', 'contractor']], // Allowed values
+          args: [['client', 'contractor', 'admin']], // Allowed values
           msg: 'Type must be either client or contractor.', // Custom error message for validation
         },
       },

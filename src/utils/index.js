@@ -1,3 +1,4 @@
+const moment = require('moment');
 const responseSkeleton = () => {
   return {
     success: false,
@@ -38,7 +39,14 @@ const escape = (input) => {
   return result;
 };
 
+function isValidDate(dateString, format = 'YYYY-MM-DD') {
+  console.log(dateString);
+
+  return moment(dateString, format, true).isValid(); // Strict parsing with format
+}
+
 module.exports = {
   responseSkeleton,
   escape,
+  isValidDate,
 };
