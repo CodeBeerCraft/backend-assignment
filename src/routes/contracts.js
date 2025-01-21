@@ -1,7 +1,5 @@
 const express = require('express');
-const sanitize = require('sanitize');
 const router = express.Router();
-router.use(sanitize.middleware);
 
 const { Authenticate, Rbac } = require('../middleware');
 
@@ -21,7 +19,7 @@ router.get('/', Authenticate, FetchContracts);
 // Create /contracts - Create contracts belonging between a client & a contractor.
 router.post('/', Authenticate, Rbac('client'), CreateContracts);
 
-// Start the job
+// Start the job : Changes status from new to in_progress
 router.post('/:contractId', Authenticate, Rbac('contractor'), StartJob);
 
 module.exports = router;

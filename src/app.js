@@ -6,6 +6,7 @@ const createError = require('http-errors');
 const helmet = require('helmet');
 const path = require('path');
 const bodyParser = require('body-parser');
+const sanitize = require('sanitize');
 
 /**
  * File Inclusions : Database/Methods/Router.
@@ -31,6 +32,7 @@ app.set('view engine', 'pug');
 app.use(bodyParser.json());
 app.use(helmet.referrerPolicy({ policy: 'no-referrer' }));
 app.use(helmet.hidePoweredBy());
+app.use(sanitize.middleware);
 
 /**
  * Routes Definitions.

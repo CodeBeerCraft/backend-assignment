@@ -1,7 +1,5 @@
 const express = require('express');
-const sanitize = require('sanitize');
 const router = express.Router();
-router.use(sanitize.middleware);
 
 const { Authenticate } = require('../middleware');
 const { FetchProfile, LoginWithProfile, RegisterNewProfile } = require('../controllers/profiles');

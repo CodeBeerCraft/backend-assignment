@@ -1,5 +1,5 @@
 const { Contract, Profile, Job } = require('../../models');
-const { Op, Sequelize } = require('sequelize');
+const { Op } = require('sequelize');
 const moment = require('moment');
 
 const Fetchjobs = async (req, res, next) => {
