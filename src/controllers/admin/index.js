@@ -68,17 +68,14 @@ const FetchBestClients = async (req, res, next) => {
   try {
     const startDate = req.queryString('start');
     const endDate = req.queryString('end');
+    const limit = parseInt(req.queryString('limit'), 10) || 10; // Default limit to 10
+    const offset = parseInt(req.queryString('offset'), 10) || 0; // Default offset to 0
 
-    if (
-      startDate.length === 0 ||
-      endDate.length === 0 ||
-      isValidDate(startDate) === false ||
-      isValidDate(endDate) === false
-    ) {
+    if (!startDate || !endDate || !isValidDate(startDate) || !isValidDate(endDate)) {
       return res.status(400).json({
         success: false,
         error: true,
-        message: 'Bad Request : Invalid Dates.',
+        message: 'Bad Request: Invalid Dates.',
         data: null,
       });
     }
@@ -88,34 +85,26 @@ const FetchBestClients = async (req, res, next) => {
         'id',
         'firstName',
         'lastName',
-        [Sequelize.fn('SUM', Sequelize.col('Client->Jobs.price')), 'totalPaid'],
+        [
+          Sequelize.literal(`(
+            SELECT SUM(Jobs.price)
+            FROM Contracts AS Client
+            INNER JOIN Jobs
+            ON Client.id = Jobs.ContractId
+            WHERE
+              Client.ClientId = Profile.id
+              AND Jobs.paid = 1
+              AND Jobs.paymentDate BETWEEN '${startDate}' AND '${endDate}'
+          )`),
+          'totalPaid',
+        ],
       ],
       where: {
         type: 'client',
       },
-      include: [
-        {
-          model: Contract,
-          as: 'Client', // Use the alias defined in the association
-          attributes: [],
-          required: true,
-          where: { status: 'terminated' },
-          include: [
-            {
-              model: Job,
-              attributes: [],
-              where: {
-                paid: true,
-                paymentDate: {
-                  [Op.between]: [startDate, endDate],
-                },
-              },
-            },
-          ],
-        },
-      ],
-      group: ['Profile.id'],
       order: [[Sequelize.literal('totalPaid'), 'DESC']],
+      limit,
+      offset,
       raw: true,
     });
 
