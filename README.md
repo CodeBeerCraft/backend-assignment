@@ -1,98 +1,142 @@
-# DEEL BACKEND TASK
+# DEEL BACKEND
 
-💫 Welcome! 🎉
+A web application built with Node.js and Express, featuring profile management, job listings, and contract handling.
 
-This backend exercise involves building a Node.js/Express.js app that will serve a REST API. We imagine you should spend around 3 hours at implement this feature.
+## Project Structure
 
-## Data Models
+## Features
 
-> **All models are defined in src/model.js**
+- Profile Management
+- Job Listings
+- Contract Handling
+- Pug Template Engine for Views
 
-### Profile
+## Prerequisites
 
-A profile can be either a `client` or a `contractor`.
-clients create contracts with contractors. contractor does jobs for clients and get paid.
-Each profile has a balance property.
+- Node.js (version X.X.X)
+- npm (version X.X.X)
 
-### Contract
+## Installation
 
-A contract between and client and a contractor.
-Contracts have 3 statuses, `new`, `in_progress`, `terminated`. contracts are considered active only when in status `in_progress`
-Contracts group jobs within them.
-
-### Job
-
-contractor get paid for jobs by clients under a certain contract.
-
-## Getting Set Up
-
-The exercise requires [Node.js](https://nodejs.org/en/) to be installed. We recommend using the LTS version.
-
-1. Start by creating a local repository for this folder.
-
-1. In the repo root directory, run `npm install` to gather all dependencies.
-
-1. Next, `npm run seed` will seed the local SQLite database. **Warning: This will drop the database if it exists**. The database lives in a local file `database.sqlite3`.
-
-1. Then run `npm start` which should start both the server and the React client.
-
-❗️ **Make sure you commit all changes to the master branch!**
-
-## Technical Notes
-
-- The server is running with [nodemon](https://nodemon.io/) which will automatically restart for you when you modify and save a file.
-
-- The database provider is SQLite, which will store data in a file local to your repository called `database.sqlite3`. The ORM [Sequelize](http://docs.sequelizejs.com/) is on top of it. You should only have to interact with Sequelize - **please spend some time reading sequelize documentation before starting the exercise.**
-
-- To authenticate users use the `getProfile` middleware that is located under src/middleware/getProfile.js. users are authenticated by passing `profile_id` in the request header. after a user is authenticated his profile will be available under `req.profile`. make sure only users that are on the contract can access their contracts.
-- The server is running on port 3001.
-
-## APIs To Implement
-
-Below is a list of the required API's for the application.
-
-1. **_GET_** `/contracts/:id` - This API is broken 😵! it should return the contract only if it belongs to the profile calling. better fix that!
-
-1. **_GET_** `/contracts` - Returns a list of contracts belonging to a user (client or contractor), the list should only contain non terminated contracts.
-
-1. **_GET_** `/jobs/unpaid` - Get all unpaid jobs for a user (**_either_** a client or contractor), for **_active contracts only_**.
-
-1. **_POST_** `/jobs/:job_id/pay` - Pay for a job, a client can only pay if his balance >= the amount to pay. The amount should be moved from the client's balance to the contractor balance.
-
-1. **_POST_** `/balances/deposit/:userId` - Deposits money into the the the balance of a client, a client can't deposit more than 25% his total of jobs to pay. (at the deposit moment)
-
-1. **_GET_** `/admin/best-profession?start=<date>&end=<date>` - Returns the profession that earned the most money (sum of jobs paid) for any contactor that worked in the query time range.
-
-1. **_GET_** `/admin/best-clients?start=<date>&end=<date>&limit=<integer>` - returns the clients the paid the most for jobs in the query time period. limit query parameter should be applied, default limit is 2.
-
-```
- [
-    {
-        "id": 1,
-        "fullName": "Reece Moyer",
-        "paid" : 100.3
-    },
-    {
-        "id": 200,
-        "fullName": "Debora Martin",
-        "paid" : 99
-    },
-    {
-        "id": 22,
-        "fullName": "Debora Martin",
-        "paid" : 21
-    }
-]
+1. Clone the repository:
+```bash
+git clone <repository-url>
 ```
 
-## Going Above and Beyond the Requirements
+2. Install dependencies:
+```bash
+npm install
+```
 
-Given the time expectations of this exercise, we don't expect anyone to submit anything super fancy, but if you find yourself with extra time, any extra credit item(s) that showcase your unique strengths would be awesome! 🙌
+3. Start the development server:
+```bash
+npm start
+```
 
-It would be great for example if you'd write some unit test / simple frontend demostrating calls to your fresh APIs.
+The application will be available at `http://localhost:<port>`.
 
-## Submitting the Assignment
+## API Routes
 
-When you have finished the assignment, zip your repo (make sure to include .git folder) and send us the zip.
+### Profiles
+- Profile-related endpoints are handled in `src/routes/profiles.js`
 
-Thank you and good luck! 🙏
+### Jobs
+- Job-related endpoints are handled in `src/routes/jobs.js`
+
+### Contracts
+- Contract-related endpoints are handled in `src/routes/contracts.js`
+
+## Views
+
+The application uses Pug as its template engine with the following views:
+- `layout.pug`: Main layout template
+- `index.pug`: Home page
+- `error.pug`: Error page
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+[Add your license here]
+
+## Contact
+
+[Add your contact information]
+
+## Application Architecture
+
+```mermaid
+graph TD
+    subgraph Server
+        A[server.js] --> B[app.js]
+        B --> C[Routes]
+        B --> D[Views]
+        B --> E[Controllers]
+        B --> F[Utils]
+    end
+
+    subgraph Routes
+        C --> G[profiles.js]
+        C --> H[contracts.js]
+        C --> I[jobs.js]
+    end
+
+    subgraph Views
+        D --> J[layout.pug]
+        D --> K[index.pug]
+        D --> L[error.pug]
+    end
+
+    subgraph Controllers
+        E --> M[admin/index.js]
+    end
+
+    subgraph Client Request Flow
+        N[Client Request] --> A
+        B --> O[Route Handler]
+        O --> P[Controller Logic]
+        P --> Q[View Rendering/API Response]
+        Q --> R[Client Response]
+    end
+
+    subgraph Data Models
+        S[Profile]
+        T[Contract]
+        U[Job]
+    end
+
+    P --> S
+    P --> T
+    P --> U
+```
+
+### Flow Description
+
+1. **Entry Points**
+   - `server.js`: Application entry point
+   - `app.js`: Express application configuration
+
+2. **Request Processing**
+   - Incoming requests are first handled by Express middleware
+   - Requests are routed to appropriate route handlers
+   - Controllers process business logic
+   - Views render responses or API sends JSON
+
+3. **Core Components**
+   - **Routes**: Handle URL routing and request distribution
+   - **Controllers**: Contain business logic
+   - **Views**: Pug templates for HTML rendering
+   - **Utils**: Shared utility functions
+
+4. **Data Flow**
+   - Client makes HTTP request
+   - Route handler processes request
+   - Controller executes business logic
+   - Data models handle database operations
+   - Response sent back to client
