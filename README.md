@@ -1,4 +1,4 @@
-# DEEL Backend API
+# Contracts Backend API
 
 A robust Node.js/Express.js application for managing freelance contracts, jobs, and payments with role-based access control.
 
